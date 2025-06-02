@@ -1,0 +1,173 @@
+CREATE DATABASE library_management;
+USE library_management;
+
+CREATE TABLE Books (
+    BOOK_ID VARCHAR(10) PRIMARY KEY,
+    TITLE VARCHAR(100),
+    AUTHOR VARCHAR(100),
+    GENRE VARCHAR(50),
+    YEAR_PUBLISHED INT,
+    AVAILABLE_COPIES INT
+);
+
+CREATE TABLE Members (
+    MEMBER_ID VARCHAR(10) PRIMARY KEY,
+    NAME VARCHAR(100),
+    EMAIL VARCHAR(100),
+    PHONE_NO VARCHAR(15),
+    ADDRESS VARCHAR(200),
+    MEMBERSHIP_DATE DATE
+);
+
+CREATE TABLE BorrowingRecords (
+    BORROW_ID VARCHAR(10) PRIMARY KEY,
+    MEMBER_ID VARCHAR(10),
+    BOOK_ID VARCHAR(10),
+    BORROW_DATE DATE,
+    RETURN_DATE DATE,
+    FOREIGN KEY (MEMBER_ID) REFERENCES Members(MEMBER_ID),
+    FOREIGN KEY (BOOK_ID) REFERENCES Books(BOOK_ID)
+);
+
+INSERT INTO Books VALUES
+('B001', 'The Great Gatsby', 'F. Scott Fitzgerald', 'Fiction', 1925, 3),
+('B002', 'A Brief History of Time', 'Stephen Hawking', 'Science', 1988, 2),
+('B003', 'Pride and Prejudice', 'Jane Austen', 'Fiction', 1813, 0),
+('B004', 'Sapiens', 'Yuval Noah Harari', 'History', 2011, 5),
+('B005', 'The Psychology of Money', 'Morgan Housel', 'Finance', 2020, 4),
+('B006', 'Dune', 'Frank Herbert', 'Science Fiction', 1965, 2),
+('B007', 'The Silent Patient', 'Alex Michaelides', 'Thriller', 2019, 0),
+('B008', 'Atomic Habits', 'James Clear', 'Self-Help', 2018, 3),
+('B009', '1984', 'George Orwell', 'Fiction', 1949, 1),
+('B010', 'The Alchemist', 'Paulo Coelho', 'Fiction', 1988, 4),
+('B011', 'Think and Grow Rich', 'Napoleon Hill', 'Self-Help', 1937, 2),
+('B012', 'The Da Vinci Code', 'Dan Brown', 'Thriller', 2003, 1);
+
+INSERT INTO Members VALUES
+('M001', 'John Smith', 'john.smith@email.com', '555-0101', '123 Main St', '2020-01-15'),
+('M002', 'Sarah Johnson', 'sarah.j@email.com', '555-0102', '456 Oak Ave', '2021-03-20'),
+('M003', 'Michael Brown', 'mbrown@email.com', '555-0103', '789 Pine Rd', '2022-06-10'),
+('M004', 'Emma Wilson', 'ewilson@email.com', '555-0104', '321 Elm St', '2023-01-05'),
+('M005', 'David Lee', 'dlee@email.com', '555-0105', '654 Maple Dr', '2023-08-15'),
+('M006', 'Lisa Anderson', 'lisa.a@email.com', '555-0106', '987 Cedar Ln', '2022-11-30'),
+('M007', 'Robert Taylor', 'rtaylor@email.com', '555-0107', '147 Birch Ave', '2021-07-22'),
+('M008', 'Jennifer Martinez', 'jmartinez@email.com', '555-0108', '258 Spruce St', '2023-04-12'),
+('M009', 'Peter Parker', 'peter.p@email.com', '555-0109', '789 Spider St', '2025-01-15'),
+('M010', 'Mary Jane', 'mj@email.com', '555-0110', '456 Watson Ave', '2025-02-20'),
+('M011', 'Bruce Wayne', 'bruce.w@email.com', '555-0111', '1007 Mountain Dr', '2025-03-10');
+
+-- 5. Insert Data into BorrowingRecords
+INSERT INTO BorrowingRecords VALUES
+('BR001', 'M001', 'B001', '2025-05-01', NULL),
+('BR002', 'M002', 'B004', '2025-04-15', '2025-05-15'),
+('BR003', 'M001', 'B002', '2025-03-01', '2025-04-01'),
+('BR004', 'M003', 'B005', '2025-05-10', NULL),
+('BR005', 'M004', 'B003', '2025-04-01', '2025-05-01'),
+('BR006', 'M002', 'B006', '2025-03-15', '2025-04-15'),
+('BR007', 'M005', 'B008', '2025-05-05', NULL),
+('BR008', 'M001', 'B007', '2025-02-01', '2025-03-01'),
+('BR009', 'M006', 'B010', '2025-04-20', '2025-05-20'),
+('BR010', 'M003', 'B009', '2025-03-10', '2025-04-10'),
+('BR011', 'M007', 'B011', '2025-05-02', NULL),
+('BR012', 'M004', 'B012', '2025-04-05', '2025-05-05'),
+('BR013', 'M008', 'B001', '2025-03-20', '2025-04-20'),
+('BR014', 'M002', 'B008', '2025-05-08', NULL),
+('BR015', 'M005', 'B003', '2025-04-10', '2025-05-10'),
+('BR016', 'M001', 'B001', '2025-01-05', '2025-02-05'),
+('BR017', 'M002', 'B001', '2025-01-10', '2025-02-10'),
+('BR018', 'M003', 'B001', '2025-01-15', '2025-02-15'),
+('BR019', 'M004', 'B001', '2025-01-20', '2025-02-20'),
+('BR020', 'M005', 'B001', '2025-02-01', '2025-03-01'),
+('BR021', 'M006', 'B001', '2025-02-05', '2025-03-05'),
+('BR022', 'M007', 'B001', '2025-02-10', '2025-03-10'),
+('BR023', 'M008', 'B001', '2025-02-15', '2025-03-15'),
+('BR024', 'M001', 'B001', '2025-03-01', '2025-04-01'),
+('BR025', 'M002', 'B001', '2025-03-05', '2025-04-05');
+
+--Retrieve a list of books currently borrowed by a specific member
+SELECT 
+	b.TITLE, 
+    b.AUTHOR, 
+    br.BORROW_DATE, 
+    br.RETURN_DATE
+FROM Books b
+JOIN BorrowingRecords br ON b.BOOK_ID = br.BOOK_ID
+WHERE br.MEMBER_ID = 'M001';
+
+--Find members who have overdue books (borrowed more than 30 days ago, not returned).
+SELECT 
+    m.NAME, 
+    b.TITLE, 
+    br.BORROW_DATE,
+    DATEDIFF(CURRENT_DATE, br.BORROW_DATE) as DAYS_OVERDUE
+FROM BorrowingRecords br
+JOIN Members m ON br.MEMBER_ID = m.MEMBER_ID
+JOIN Books b ON br.BOOK_ID = b.BOOK_ID
+WHERE br.RETURN_DATE IS NULL 
+AND DATEDIFF(CURRENT_DATE, br.BORROW_DATE) > 30;
+
+--Retrieve books by genre along with the count of available copies.
+SELECT 
+    GENRE, 
+    COUNT(*) as TOTAL_BOOKS,
+    SUM(AVAILABLE_COPIES) as AVAILABLE_COPIES
+FROM Books
+GROUP BY GENRE
+ORDER BY TOTAL_BOOKS DESC;
+
+--Find the most borrowed books overall.
+SELECT 
+    b.TITLE,
+    COUNT(*) as TIMES_BORROWED
+FROM BorrowingRecords br
+JOIN Books b ON br.BOOK_ID = b.BOOK_ID
+GROUP BY b.TITLE
+ORDER BY TIMES_BORROWED DESC
+LIMIT 1;
+
+--Retrieve members who have borrowed books from at least three different genres.
+SELECT 
+    m.NAME,
+    COUNT(DISTINCT b.GENRE) as GENRES_BORROWED
+FROM Members m
+JOIN BorrowingRecords br ON m.MEMBER_ID = br.MEMBER_ID
+JOIN Books b ON br.BOOK_ID = b.BOOK_ID
+GROUP BY m.MEMBER_ID, m.NAME
+HAVING GENRES_BORROWED >= 3;
+
+--total number of books borrowed per month
+SELECT 
+    DATE_FORMAT(BORROW_DATE, '%Y-%m') as MONTH,
+    COUNT(*) as TOTAL_BORROWS
+FROM BorrowingRecords
+GROUP BY MONTH
+ORDER BY MONTH;
+
+
+--top three most active members based on the number of books borrowed.
+SELECT 
+    m.NAME,
+    COUNT(*) as BOOKS_BORROWED
+FROM Members m
+JOIN BorrowingRecords br ON m.MEMBER_ID = br.MEMBER_ID
+GROUP BY m.MEMBER_ID, m.NAME
+ORDER BY BOOKS_BORROWED DESC
+LIMIT 3;
+
+--authors whose books have been borrowed at least 10 times.
+SELECT 
+    b.AUTHOR,
+    COUNT(br.BORROW_ID) as TOTAL_BORROWS
+FROM Books b
+JOIN BorrowingRecords br ON b.BOOK_ID = br.BOOK_ID
+GROUP BY b.AUTHOR
+HAVING COUNT(br.BORROW_ID) >= 10
+ORDER BY TOTAL_BORROWS DESC;
+
+--members who have never borrowed a book
+SELECT 
+    m.NAME,
+    m.EMAIL
+FROM Members m
+LEFT JOIN BorrowingRecords br ON m.MEMBER_ID = br.MEMBER_ID
+WHERE br.BORROW_ID IS NULL;
